@@ -19,6 +19,13 @@
   "homepage": "https://github.com/rkhaimov/thegame#readme",
   "dependencies": {
     "animejs": "^3.2.1",
+    "lodash": "^4.17.20",
     "typescript": "^4.1.3"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.165",
+    "@types/node": "^14.14.14",
+    "ts-node": "^9.1.1",
+    "tsc-watch": "^4.2.9"
   }
 }

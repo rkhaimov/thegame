@@ -1,1 +1,3 @@
-console.log('Hello world');
+import { sum } from './sum';
+
+console.log('Hello world', sum());
