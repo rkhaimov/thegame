@@ -1,13 +1,10 @@
 import http from 'http';
 import fs from 'fs';
 import path from 'path';
+import { Server } from 'ws';
 import { debounce } from 'lodash';
 
-fs.watch(path.join(__dirname, '..', 'bundled'), debounce((event, file) => {
-  console.log(event, file);
-}, 100));
-
-http.createServer(function (request, response) {
+const server = http.createServer(function (request, response) {
   if (request.url === '/') {
     return fs.readFile(path.join(process.cwd(), 'index.html'), (error, content) => {
       if (error !== null) {
@@ -20,6 +17,7 @@ http.createServer(function (request, response) {
   }
 
   const url = request.url;
+  console.log(url);
 
   if (url === undefined) {
     return;
@@ -43,5 +41,15 @@ http.createServer(function (request, response) {
     response.end();
   });
 }).listen(8080);
+
+const wss = new Server({ server });
+
+wss.on('connection', (client) => {
+  console.log('connection');
+
+  fs.watch(path.join(__dirname, '..', 'bundled'), debounce(() => {
+    client.send(Date.now());
+  }, 100));
+})
 
 console.log('Running');
