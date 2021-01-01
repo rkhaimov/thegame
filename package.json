@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "tsc --project ./tsconfig.compile.json && webpack serve --open"
+    "start": "tsc --project ./tsconfig.compile.json && webpack serve --open",
+    "format": "prettier --write ."
   },
   "repository": {
     "type": "git",
@@ -30,8 +31,10 @@
     "@types/node": "^14.14.14",
     "@types/ws": "^7.4.0",
     "babel-loader": "^8.2.2",
+    "css-loader": "^5.0.1",
     "html-webpack-plugin": "^4.5.0",
     "prettier": "^2.2.1",
+    "style-loader": "^2.0.0",
     "ts-node": "^9.1.1",
     "tsc-watch": "^4.2.9",
     "webpack": "^5.11.1",
