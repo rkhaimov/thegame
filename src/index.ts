@@ -1,23 +1,32 @@
+import { morphInTo } from './morph';
 import './styles.css';
-import { moveInACircle, moveInALine } from './line';
-import { Point } from './Point';
-import { sequenceLoop } from './utils';
 
-const root = document.createElement('div');
+const root = createRoot();
 
-root.setAttribute('id', 'root');
+const canvas = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+canvas.classList.add('canvas');
 
-document.body.appendChild(root);
+const one = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+const two = document.createElementNS('http://www.w3.org/2000/svg', 'path');
 
-const points: Point[] = [
-  new Point({ x: 400, y: 100 }),
-  new Point({ x: 600, y: 100 }),
-  new Point({ x: 600, y: 300 }),
-  new Point({ x: 400, y: 300 }),
-];
+one.setAttribute('d', 'M150 150 L75 350 L225 350 Z');
+one.setAttribute('fill', 'red');
 
-points.forEach((point) => point.render());
+two.setAttribute('d', 'M100 100 L75 350 L50 350 Z');
+two.setAttribute('fill', 'blue');
 
-sequenceLoop(points, 0, moveInACircle);
+root.appendChild(canvas);
+canvas.appendChild(one);
+canvas.appendChild(two);
 
-setTimeout(() => sequenceLoop(points, 0, moveInALine), 1_000);
+morphInTo(two, one);
+
+function createRoot() {
+  const root = document.createElement('div');
+
+  root.setAttribute('id', 'root');
+
+  document.body.appendChild(root);
+
+  return root;
+}

@@ -2,8 +2,8 @@ import { Point } from './Point';
 
 describe('Point', () => {
   it('should return angle', () => {
-    const p1 = new Point({ x: 2, y: 2 });
-    const p2 = new Point({ x: 4, y: 2 });
+    const p1 = new Point({ x: 2, y: 2 }, noop);
+    const p2 = new Point({ x: 4, y: 2 }, noop);
 
     expect(p1.getAngleBetween(p2)).toBe(0);
 
@@ -25,8 +25,8 @@ describe('Point', () => {
   });
 
   it('should return distance', () => {
-    const p1 = new Point({ x: 0, y: 0 });
-    const p2 = new Point({ x: 3, y: 4 });
+    const p1 = new Point({ x: 0, y: 0 }, noop);
+    const p2 = new Point({ x: 3, y: 4 }, noop);
 
     expect(p1.getDistanceFrom(p2)).toBe(5);
 
@@ -40,3 +40,5 @@ describe('Point', () => {
     expect(p1.getDistanceFrom(p2)).toBe(Math.sqrt(2));
   });
 });
+
+function noop() {}

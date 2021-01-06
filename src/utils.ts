@@ -6,7 +6,7 @@ export function assertNotUndefined<T>(
   assert(value !== undefined);
 }
 
-function assert(
+export function assert(
   condition: any,
   message = 'Condition is false'
 ): asserts condition {

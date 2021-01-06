@@ -1,7 +1,21 @@
-import { assertNotUndefined } from './utils';
-
 export class Point {
-  constructor(public position: Position) {}
+  static fromPairOfStrings(
+    position: [string, string],
+    handlePositionChange: HandlePositionChange
+  ) {
+    return new Point(
+      {
+        x: parseInt(position[0], 10),
+        y: parseInt(position[1], 10),
+      },
+      handlePositionChange
+    );
+  }
+
+  constructor(
+    public position: Position,
+    private handlePositionChange: HandlePositionChange
+  ) {}
 
   getAngleBetween(point: Point) {
     return this.atan2(
@@ -11,6 +25,8 @@ export class Point {
   }
 
   move(position: Position) {
+    this.handlePositionChange(this.position, position);
+
     this.position = position;
   }
 
@@ -21,31 +37,11 @@ export class Point {
     );
   }
 
-  moveAndRender(node: HTMLDivElement, position: Position) {
-    this.move(position);
-
-    node.style.left = `${this.position.x}px`;
-    node.style.top = `${this.position.y}px`;
-  }
-
-  render() {
-    const node = document.createElement('div');
-
-    node.classList.add('point');
-
-    const root = document.querySelector('#root');
-
-    assertNotUndefined(root);
-
-    root.appendChild(node);
-
-    node.style.left = `${this.position.x}px`;
-    node.style.top = `${this.position.y}px`;
-
-    return node;
-  }
-
   private atan2(y: number, x: number) {
+    if (x === 0 && y === 0) {
+      return 0;
+    }
+
     if (x < 0) {
       return Math.atan(y / x) + Math.PI;
     }
@@ -58,4 +54,9 @@ export class Point {
   }
 }
 
-type Position = { x: number; y: number };
+type HandlePositionChange = (
+  from: Point['position'],
+  to: Point['position']
+) => void;
+
+export type Position = { x: number; y: number };

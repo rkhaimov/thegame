@@ -1,0 +1,72 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`morph should morph shapes of equal sizes 1`] = `
+Array [
+  Object {
+    "from": Object {
+      "point": Point {
+        "handlePositionChange": [Function],
+        "position": Object {
+          "x": 0,
+          "y": 0,
+        },
+      },
+      "type": "M",
+    },
+    "to": Object {
+      "point": Point {
+        "handlePositionChange": [Function],
+        "position": Object {
+          "x": 10,
+          "y": 0,
+        },
+      },
+      "type": "M",
+    },
+  },
+  Object {
+    "from": Object {
+      "point": Point {
+        "handlePositionChange": [Function],
+        "position": Object {
+          "x": 5,
+          "y": 5,
+        },
+      },
+      "type": "L",
+    },
+    "to": Object {
+      "point": Point {
+        "handlePositionChange": [Function],
+        "position": Object {
+          "x": 15,
+          "y": 5,
+        },
+      },
+      "type": "L",
+    },
+  },
+  Object {
+    "from": Object {
+      "point": Point {
+        "handlePositionChange": [Function],
+        "position": Object {
+          "x": 10,
+          "y": 30,
+        },
+      },
+      "type": "L",
+    },
+    "to": Object {
+      "point": Point {
+        "handlePositionChange": [Function],
+        "position": Object {
+          "x": 20,
+          "y": 30,
+        },
+      },
+      "type": "L",
+    },
+  },
+]
+`;
