@@ -6,20 +6,21 @@ const root = createRoot();
 const canvas = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
 canvas.classList.add('canvas');
 
-const one = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-const two = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+const target = document.createElementNS('http://www.w3.org/2000/svg', 'path');
 
-one.setAttribute('d', 'M150 150 L75 350 L225 350 Z');
-one.setAttribute('fill', 'red');
-
-two.setAttribute('d', 'M100 100 L75 350 L50 350 Z');
-two.setAttribute('fill', 'blue');
+target.setAttribute('d', 'M26 8L11 82L22 82L28 49L32 49L38 65L25 65L23 73L41 73L44 81L56 81Z');
+target.setAttribute('fill', 'blue');
 
 root.appendChild(canvas);
-canvas.appendChild(one);
-canvas.appendChild(two);
+canvas.appendChild(target);
 
-morphInTo(two, one);
+fun();
+
+function fun() {
+  morphInTo(target, { getAttribute: () => 'M152 2L152 15L175 15L178 70L194 71L191 16L219 17L218 3Z' }, () => {
+    morphInTo(target, { getAttribute: () => 'M52 2L52 15L75 15L78 70L94 71L91 16L119 17L118 3Z' }, fun);
+  });
+}
 
 function createRoot() {
   const root = document.createElement('div');

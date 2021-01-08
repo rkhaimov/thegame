@@ -1,20 +1,6 @@
 export class Point {
-  static fromPairOfStrings(
-    position: [string, string],
-    handlePositionChange: HandlePositionChange
-  ) {
-    return new Point(
-      {
-        x: parseInt(position[0], 10),
-        y: parseInt(position[1], 10),
-      },
-      handlePositionChange
-    );
-  }
-
   constructor(
     public position: Position,
-    private handlePositionChange: HandlePositionChange
   ) {}
 
   getAngleBetween(point: Point) {
@@ -25,8 +11,6 @@ export class Point {
   }
 
   move(position: Position) {
-    this.handlePositionChange(this.position, position);
-
     this.position = position;
   }
 
@@ -53,10 +37,5 @@ export class Point {
     return Math.atan(y / x);
   }
 }
-
-type HandlePositionChange = (
-  from: Point['position'],
-  to: Point['position']
-) => void;
 
 export type Position = { x: number; y: number };

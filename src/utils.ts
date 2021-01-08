@@ -8,10 +8,19 @@ export function assertNotUndefined<T>(
 
 export function assert(
   condition: any,
-  message = 'Condition is false'
+  message = 'Condition is false',
+  onError = noop,
 ): asserts condition {
   if (condition === false) {
-    throw new Error(message);
+    onError();
+
+    throw new AssertionError(message);
+  }
+}
+
+class AssertionError extends Error {
+  constructor(message: string) {
+    super(`Assertion has failed: ${message}`);
   }
 }
 
@@ -27,4 +36,8 @@ export function sequenceLoop(
   animation(points[index], points[next], () =>
     sequenceLoop(points, next, animation)
   );
+}
+
+function noop() {
+
 }
