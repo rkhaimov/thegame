@@ -1,46 +1,54 @@
-function fromOne(game: Game): Game[] {
-  const children = game.children
-    .map((child) => fromOne({ score: child, children: [] }))
-    .flat();
+export const GARNIR = [
+  'Рис',
+  'Гречка',
+  'Булгур',
+  'Макароны',
+  'Пшенка',
+  'Картошка',
+  'Бобовый суп',
+  'Овощной суп',
+];
+const MYASO = [
+  'Грудка индейки',
+  'Минтай',
+  'Треска',
+  'Постная говядина (телятина)',
+];
+const DOBAVKI = ['Масло', 'Йогурт', 'Творог'];
+const UTRO = ['Молочный Омлет (2 яйца)', 'Молочная Пшено', 'Молочный Геркулес'];
+export const FRUCTY = ['Яблоки', 'Груши', 'Хурма'];
+const OVOSHI = ['Цветная капуста', 'Морковь', 'Кабачки', 'Баклажаны'];
 
-  return [
-    { score: game.score + 1, children: game.children },
-    { score: game.score + 2, children: game.children },
-    ...children.map(child => ({ ...child, children: [game.score] })),
-  ];
+generateMealDay();
+
+export function generateMealDay() {
+  console.log('А теперь продукты на ближайшее время:\n');
+
+  console.log('Гарнир: ', pickOne(GARNIR), '\n');
+
+  console.log('Мясо: ', pickOne(MYASO), '\n');
+
+  console.log('Добавки: ', pickOne(DOBAVKI), '\n');
+
+  console.log('Из фруктов: ', pickMany(FRUCTY), '\n');
+
+  console.log('Из овощей: ', pickMany(OVOSHI), '\n');
+
+  console.log('А на утро: ', pickOne(UTRO), '\n');
 }
 
-function fromMany(game: Game): Game[] {
-  return [
-    { score: game.score, children: [1, ...game.children] },
-    { score: game.score, children: [2, ...game.children] },
-  ];
+function getRandomInt(max: number) {
+  return Math.floor(Math.random() * (max - 1));
 }
 
-const target: Game = {
-  score: 1,
-  children: [1],
-};
-
-print([...fromOne(target), ...fromMany(target)]);
-
-function print(games: Game[]) {
-  console.log(toString(games).join('\n'));
+export function pickOne(elements: string[]): string {
+  return elements[getRandomInt(elements.length + 1)];
 }
 
-function toString(games: Game[]): string[] {
-  return games.map((game) =>
-    [game.score, ...game.children].map((entry) => `g(${entry})`).join(' o ')
-  );
-}
+export function pickMany(elements: string[]): string {
+  const max = Math.pow(2, elements.length) + 1;
 
-type Game = {
-  score: number;
-  children: number[];
-};
+  const mask = getRandomInt(max).toString(2).padStart(elements.length, '0');
 
-function assert(condition: any): asserts condition {
-  if (condition === false) {
-    throw new Error();
-  }
+  return elements.filter((element, index) => mask[index] === '1').join(', ');
 }

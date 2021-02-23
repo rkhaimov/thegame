@@ -4,7 +4,7 @@ import path from 'path';
 
 const config: Configuration = {
   mode: 'development',
-  entry: './src/index.ts',
+  entry: './src/food.test.ts',
   devtool: 'inline-source-map',
   module: {
     rules: [

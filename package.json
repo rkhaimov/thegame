@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "tsc --project ./tsconfig.compile.json && webpack serve --open",
+    "start": "ts-node ./src/index.ts",
     "format": "prettier --write .",
     "test": "jest --watch"
   },
