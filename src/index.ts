@@ -1,16 +1,46 @@
-import Snap from 'snapsvg';
-import './styles.css';
+function fromOne(game: Game): Game[] {
+  const children = game.children
+    .map((child) => fromOne({ score: child, children: [] }))
+    .flat();
 
-const svg = Snap(window.innerWidth, window.innerHeight);
+  return [
+    { score: game.score + 1, children: game.children },
+    { score: game.score + 2, children: game.children },
+    ...children.map(child => ({ ...child, children: [game.score] })),
+  ];
+}
 
-const A = svg.path('M 8.1 70.8 L 0 67.5 L 27.4 0 L 37.8 0 L 64.8 67.5 L 56.1 71 L 48.3 51 L 15.9 51 L 8.1 70.8 Z M 32.1 9.4 L 18.9 43 L 45.2 43 L 32.1 9.4 Z');
+function fromMany(game: Game): Game[] {
+  return [
+    { score: game.score, children: [1, ...game.children] },
+    { score: game.score, children: [2, ...game.children] },
+  ];
+}
 
-A.animate({
-  d: 'M 0 70.601 L 0 1.001 A 110.94 110.94 0 0 1 2.857 0.715 Q 5.431 0.488 8.65 0.301 A 164.369 164.369 0 0 1 13.472 0.096 Q 15.949 0.024 18.72 0.007 A 292.75 292.75 0 0 1 20.6 0.001 A 55.652 55.652 0 0 1 27.986 0.458 Q 31.681 0.954 34.697 1.988 A 22.517 22.517 0 0 1 40.35 4.801 A 16.261 16.261 0 0 1 45.033 9.69 Q 46.997 12.939 47.181 17.125 A 19.927 19.927 0 0 1 47.2 18.001 A 17.88 17.88 0 0 1 46.665 22.481 A 13.634 13.634 0 0 1 44.3 27.401 Q 41.675 30.841 36.755 33.215 A 31.946 31.946 0 0 1 35.7 33.701 A 30.672 30.672 0 0 1 40.336 35.754 Q 43.813 37.676 46 40.301 A 14.932 14.932 0 0 1 49.281 47.782 A 20.14 20.14 0 0 1 49.5 50.801 A 19.849 19.849 0 0 1 48.174 58.189 Q 46.385 62.692 42.184 65.899 A 22.52 22.52 0 0 1 42.05 66.001 A 24.359 24.359 0 0 1 34.85 69.626 Q 31.514 70.706 27.445 71.195 A 60.821 60.821 0 0 1 20.2 71.601 A 266.158 266.158 0 0 1 12.12 71.482 A 224.863 224.863 0 0 1 8.65 71.351 A 138.2 138.2 0 0 1 5.463 71.17 Q 2.2 70.944 0 70.601 Z M 20.9 38.401 L 9.5 38.401 L 9.5 63.101 Q 14.7 63.701 20.9 63.701 Q 29.9 63.701 34.85 60.501 Q 39.377 57.574 39.764 52.222 A 14.167 14.167 0 0 0 39.8 51.201 A 11.728 11.728 0 0 0 38.928 46.601 Q 37.826 43.988 35.333 42.113 A 14.027 14.027 0 0 0 34.9 41.801 A 16.7 16.7 0 0 0 30.226 39.599 Q 26.303 38.401 20.9 38.401 Z M 9.5 31.001 L 20.5 31.001 Q 26.288 31.001 30.331 29.256 A 15.329 15.329 0 0 0 33.05 27.751 Q 37.7 24.501 37.7 19.201 Q 37.7 13.615 33.282 10.718 A 12.106 12.106 0 0 0 33.1 10.601 Q 29.584 8.384 24.082 7.862 A 37.945 37.945 0 0 0 20.5 7.701 Q 17.2 7.701 14.5 7.851 Q 11.8 8.001 9.5 8.201 L 9.5 31.001 Z',
-}, 500, mina.easeinout);
+const target: Game = {
+  score: 1,
+  children: [1],
+};
+
+print([...fromOne(target), ...fromMany(target)]);
+
+function print(games: Game[]) {
+  console.log(toString(games).join('\n'));
+}
+
+function toString(games: Game[]): string[] {
+  return games.map((game) =>
+    [game.score, ...game.children].map((entry) => `g(${entry})`).join(' o ')
+  );
+}
+
+type Game = {
+  score: number;
+  children: number[];
+};
 
 function assert(condition: any): asserts condition {
   if (condition === false) {
-    throw new Error('Condition failed');
+    throw new Error();
   }
 }
