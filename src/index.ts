@@ -1,46 +1,54 @@
-function fromOne(game: Game): Game[] {
-  const children = game.children
-    .map((child) => fromOne({ score: child, children: [] }))
-    .flat();
+import './styles.css';
+import { createCanvas, createSeveralCircles } from './components';
+import { startBounce } from './animations';
 
-  return [
-    { score: game.score + 1, children: game.children },
-    { score: game.score + 2, children: game.children },
-    ...children.map(child => ({ ...child, children: [game.score] })),
-  ];
+const canvas = createCanvas();
+
+const circles = createSeveralCircles();
+
+circles.forEach((circle) => canvas.appendChild(circle));
+
+startBounce({
+  target: 1,
+  numberOfJumps: 1,
+  speed: 0.5,
+  onAction(value) {
+    scaleCircles(circles, value);
+  }
+});
+
+startBounce({
+  target: 5,
+  numberOfJumps: 1,
+  speed: 0.25,
+  onAction(value) {
+    stretchCircles(circles, value);
+  }
+});
+
+function scaleCircles(circles: SVGCircleElement[], factor: number) {
+  circles.forEach(circle => circle.setAttribute('r', `${25 * factor}px`));
 }
 
-function fromMany(game: Game): Game[] {
-  return [
-    { score: game.score, children: [1, ...game.children] },
-    { score: game.score, children: [2, ...game.children] },
-  ];
-}
+function stretchCircles(circles: SVGCircleElement[], amount: number) {
+  assert(circles.length % 2 === 1);
 
-const target: Game = {
-  score: 1,
-  children: [1],
-};
+  const middle = Math.floor(circles.length / 2);
 
-print([...fromOne(target), ...fromMany(target)]);
+  const before = circles.slice(0, middle);
+  const after = circles.slice(middle + 1);
 
-function print(games: Game[]) {
-  console.log(toString(games).join('\n'));
-}
+  before.forEach((circle, index) =>
+    circle.setAttribute('cx', `${50 - amount * (index + 1)}%`)
+  );
 
-function toString(games: Game[]): string[] {
-  return games.map((game) =>
-    [game.score, ...game.children].map((entry) => `g(${entry})`).join(' o ')
+  after.forEach((circle, index) =>
+    circle.setAttribute('cx', `${50 + amount * (index + 1)}%`)
   );
 }
 
-type Game = {
-  score: number;
-  children: number[];
-};
-
 function assert(condition: any): asserts condition {
   if (condition === false) {
-    throw new Error();
+    throw new Error('Condition is false');
   }
 }
