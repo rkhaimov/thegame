@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/rkhaimov/thegame#readme",
   "dependencies": {
+    "bezier-easing": "^2.1.0",
     "typescript": "^4.1.3"
   },
   "devDependencies": {

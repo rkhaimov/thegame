@@ -1,33 +1,67 @@
-export function startBounce(config: Config) {
-  let current = config.speed;
-  const to = (config.numberOfJumps + 1) * Math.PI;
-  const strength = config.target;
+import { animate } from './animate';
+import bezier from 'bezier-easing';
 
-  requestAnimationFrame(update);
+export function beat(circles: SVGCircleElement[]) {
+  let current = -1 * (Math.PI / 2);
+
+  let handle = requestAnimationFrame(update);
 
   function update() {
-    if (current > to) {
-      config.onAction(config.target);
+    const value = (Math.sin(current) + 1) * 0.03;
 
-      return;
-    }
+    scaleCircles(circles, 1 + value);
 
-    const position = (Math.sin(current) / current) * -1 + 1;
+    current += 0.045;
 
-    config.onAction(position * strength);
-
-    const progress = Math.min(current / to, 0.99);
-    const factor = (1 - progress) / (1 + progress);
-
-    current += config.speed * factor;
-
-    requestAnimationFrame(update);
+    handle = requestAnimationFrame(update);
   }
+
+  return {
+    end: () => cancelAnimationFrame(handle),
+  };
 }
 
-type Config = {
-  target: number;
-  numberOfJumps: number;
-  speed: number;
-  onAction(value: number): void;
-};
+export async function mount(circles: SVGCircleElement[]) {
+  await animate({
+    duration: 1_000,
+    easing: bezier(0.86, 0, 0.07, 1),
+    onAnimate(value: number) {
+      scaleCircles(circles, value);
+    }
+  });
+
+  await animate({
+    duration: 500,
+    easing: bezier(0.65, 0.05, 0.36, 1),
+    onAnimate(value: number) {
+      stretchCircles(circles, 5 * value);
+    }
+  });
+}
+
+function scaleCircles(circles: SVGCircleElement[], factor: number) {
+  circles.forEach(circle => circle.setAttribute('r', `${25 * factor}px`));
+}
+
+function stretchCircles(circles: SVGCircleElement[], amount: number) {
+  assert(circles.length % 2 === 1);
+
+  const middle = Math.floor(circles.length / 2);
+
+  const before = circles.slice(0, middle);
+  const after = circles.slice(middle + 1);
+
+  before.forEach((circle, index) =>
+    circle.setAttribute('cx', `${50 - amount * (index + 1)}%`)
+  );
+
+  after.forEach((circle, index) =>
+    circle.setAttribute('cx', `${50 + amount * (index + 1)}%`)
+  );
+}
+
+function assert(condition: any): asserts condition {
+  if (condition === false) {
+    throw new Error('Condition is false');
+  }
+}
