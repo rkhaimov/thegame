@@ -1,46 +1,77 @@
-function fromOne(game: Game): Game[] {
-  const children = game.children
-    .map((child) => fromOne({ score: child, children: [] }))
-    .flat();
+import { print } from './print';
+import { GNode, Graph } from './types';
+import { assert } from './utils';
 
-  return [
-    { score: game.score + 1, children: game.children },
-    { score: game.score + 2, children: game.children },
-    ...children.map(child => ({ ...child, children: [game.score] })),
-  ];
-}
+const graph: Graph = new Map<number, GNode>();
 
-function fromMany(game: Game): Game[] {
-  return [
-    { score: game.score, children: [1, ...game.children] },
-    { score: game.score, children: [2, ...game.children] },
-  ];
-}
+graph.set(0, { neighbors: [1, 2] });
+graph.set(1, { neighbors: [] });
+graph.set(2, { neighbors: [1] });
 
-const target: Game = {
-  score: 1,
-  children: [1],
-};
+function paint(graph: Graph, colors: string[]) {
+  const links = new Map<number, Set<number>>();
 
-print([...fromOne(target), ...fromMany(target)]);
-
-function print(games: Game[]) {
-  console.log(toString(games).join('\n'));
-}
-
-function toString(games: Game[]): string[] {
-  return games.map((game) =>
-    [game.score, ...game.children].map((entry) => `g(${entry})`).join(' o ')
-  );
-}
-
-type Game = {
-  score: number;
-  children: number[];
-};
-
-function assert(condition: any): asserts condition {
-  if (condition === false) {
-    throw new Error();
+  for (const [knode] of graph.entries()) {
+    sdeep(graph, knode, links);
   }
+
+  for (const [knode, neighbors] of links.entries()) {
+    const node = getNode(graph, knode);
+
+    const acolor = getAllowedColor(graph, neighbors, colors);
+
+    node.color = acolor;
+  }
+
+  return graph;
 }
+
+function sdeep(
+  graph: Graph,
+  knode: number,
+  links: Map<number, Set<number>>,
+  nvisited = new Set<number>(),
+  parent?: number,
+) {
+  const node = getNode(graph, knode);
+
+  if (links.has(knode) === false) {
+    links.set(knode, new Set(node.neighbors));
+  }
+
+  if (parent !== undefined) {
+    links.get(knode)!.add(parent);
+  }
+
+  if (nvisited.has(knode)) {
+    return;
+  }
+
+  nvisited.add(knode);
+
+  node.neighbors.forEach(kneighbor => sdeep(graph, kneighbor, links, nvisited, knode));
+}
+
+function getAllowedColor(graph: Graph, neighbors: Set<number>, colors: string[]) {
+  const acolor = colors.find(color => {
+    const taken = Array.from(neighbors).some(kneighbor => getNode(graph, kneighbor).color === color);
+
+    return taken === false;
+  });
+
+  assert(acolor !== undefined);
+
+  return acolor;
+}
+
+function getNode(graph: Graph, key: number) {
+  const node = graph.get(key);
+
+  assert(node !== undefined);
+
+  return node;
+}
+
+const colors = ['red', 'green', 'blue', 'yellow', 'brown'];
+
+print(paint(graph, colors))
