@@ -1,77 +1,40 @@
-import { print } from './print';
-import { GNode, Graph } from './types';
-import { assert } from './utils';
+const WAYS: Record<string, 'P' | 'N'> = {
+  ['1']: 'P',
+};
 
-const graph: Graph = new Map<number, GNode>();
+for (let permutation = 3; permutation < 10; permutation += 2) {
+  const bits = Math.floor(Math.log2(permutation));
 
-graph.set(0, { neighbors: [1, 2] });
-graph.set(1, { neighbors: [] });
-graph.set(2, { neighbors: [1] });
+  for (let bit = bits; bit > 0; bit -= 1) {
+    const leave = Math.pow(2, bit) - 1;
 
-function paint(graph: Graph, colors: string[]) {
-  const links = new Map<number, Set<number>>();
+    const result = (leave & permutation).toString(2);
 
-  for (const [knode] of graph.entries()) {
-    sdeep(graph, knode, links);
+    if (WAYS[result] === 'P') {
+      WAYS[permutation.toString(2)] = 'N';
+
+      break;
+    }
   }
 
-  for (const [knode, neighbors] of links.entries()) {
-    const node = getNode(graph, knode);
-
-    const acolor = getAllowedColor(graph, neighbors, colors);
-
-    node.color = acolor;
+  if (WAYS[permutation.toString(2)] === 'N') {
+    continue;
   }
 
-  return graph;
+  for (let bit = bits; bit > 1; bit -= 2) {
+    const mask = Math.pow(2, bits + 1) - 1;
+    const leave = (Math.pow(2, bit) + Math.pow(2, bit - 1)) ^ mask;
+
+    const result = (permutation & leave).toString(2);
+
+    if (WAYS[result] === 'P') {
+      WAYS[permutation.toString(2)] = 'N';
+
+      break;
+    }
+  }
+
+  WAYS[permutation.toString(2)] = WAYS[permutation.toString(2)] ?? 'P';
 }
 
-function sdeep(
-  graph: Graph,
-  knode: number,
-  links: Map<number, Set<number>>,
-  nvisited = new Set<number>(),
-  parent?: number,
-) {
-  const node = getNode(graph, knode);
-
-  if (links.has(knode) === false) {
-    links.set(knode, new Set(node.neighbors));
-  }
-
-  if (parent !== undefined) {
-    links.get(knode)!.add(parent);
-  }
-
-  if (nvisited.has(knode)) {
-    return;
-  }
-
-  nvisited.add(knode);
-
-  node.neighbors.forEach(kneighbor => sdeep(graph, kneighbor, links, nvisited, knode));
-}
-
-function getAllowedColor(graph: Graph, neighbors: Set<number>, colors: string[]) {
-  const acolor = colors.find(color => {
-    const taken = Array.from(neighbors).some(kneighbor => getNode(graph, kneighbor).color === color);
-
-    return taken === false;
-  });
-
-  assert(acolor !== undefined);
-
-  return acolor;
-}
-
-function getNode(graph: Graph, key: number) {
-  const node = graph.get(key);
-
-  assert(node !== undefined);
-
-  return node;
-}
-
-const colors = ['red', 'green', 'blue', 'yellow', 'brown'];
-
-print(paint(graph, colors))
+console.log(WAYS);

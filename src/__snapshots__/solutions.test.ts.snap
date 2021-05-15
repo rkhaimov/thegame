@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`generates outcomes for 10 1`] = `
+Object {
+  "1": "P",
+  "1001": "N",
+  "101": "N",
+  "11": "N",
+  "111": "N",
+}
+`;
+
+exports[`generates outcomes for 20 1`] = `
+Object {
+  "1": "P",
+  "10001": "N",
+  "1001": "N",
+  "10011": "N",
+  "101": "N",
+  "1011": "N",
+  "11": "N",
+  "1101": "N",
+  "111": "N",
+  "1111": "P",
+}
+`;
