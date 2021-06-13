@@ -1,40 +1,67 @@
-const WAYS: Record<string, 'P' | 'N'> = {
-  ['1']: 'P',
-};
+import { Flipper } from 'flip-toolkit';
+import './styles.css';
 
-for (let permutation = 3; permutation < 10; permutation += 2) {
-  const bits = Math.floor(Math.log2(permutation));
+const root = document.createElement('div');
 
-  for (let bit = bits; bit > 0; bit -= 1) {
-    const leave = Math.pow(2, bit) - 1;
+document.body.appendChild(root);
 
-    const result = (leave & permutation).toString(2);
+root.innerHTML = `
+<a class='card' href='#'>
+  <div class='card-content'>
+    <h1>Is it hero?</h1>
+      <img src='https://www.goodrx.com/blog/wp-content/uploads/2018/11/generic-vs-brand-goodrx.jpg' alt='Generic'>
+    <p>Here is some description for ya</p>
+  </div>
+</a>`;
 
-    if (WAYS[result] === 'P') {
-      WAYS[permutation.toString(2)] = 'N';
+const card = document.querySelector<HTMLAnchorElement>('.card');
 
-      break;
-    }
-  }
+if (card) {
+  card.addEventListener('click', function (event) {
+    event.preventDefault();
 
-  if (WAYS[permutation.toString(2)] === 'N') {
-    continue;
-  }
+    const flipper = new Flipper({
+      element: document.body,
+      debug: false,
+      // spring: { stiffness: 10, damping: 10 },
+    });
 
-  for (let bit = bits; bit > 1; bit -= 2) {
-    const mask = Math.pow(2, bits + 1) - 1;
-    const leave = (Math.pow(2, bit) + Math.pow(2, bit - 1)) ^ mask;
+    const content = root.querySelector('.card-content');
+    const title = root.querySelector('h1');
+    const image = root.querySelector('img');
+    const text = root.querySelector('p');
 
-    const result = (permutation & leave).toString(2);
+    flipper.addFlipped({
+      element: this,
+      flipId: 'card',
+      children: () => null,
+    });
 
-    if (WAYS[result] === 'P') {
-      WAYS[permutation.toString(2)] = 'N';
+    flipper.addInverted({
+      element: content as HTMLDivElement,
+      parent: this,
+    } as any);
 
-      break;
-    }
-  }
+    flipper.addFlipped({
+      element: title as HTMLElement,
+      flipId: 'title',
+      children: () => null,
+    });
+    flipper.addFlipped({
+      element: image as HTMLElement,
+      flipId: 'image',
+      children: () => null,
+    });
+    flipper.addFlipped({
+      element: text as HTMLElement,
+      flipId: 'text',
+      children: () => null,
+    });
 
-  WAYS[permutation.toString(2)] = WAYS[permutation.toString(2)] ?? 'P';
+    flipper.recordBeforeUpdate();
+
+    this.classList.toggle('expanded');
+
+    (flipper.update as any)();
+  });
 }
-
-console.log(WAYS);
