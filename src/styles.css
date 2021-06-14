@@ -1,56 +1,27 @@
-:root {
-    --animation-speed: 50ms;
-    --easing: ease;
-}
-
 body {
     padding: 0;
     margin: 0;
     background-color: gray;
 }
 
-body > div {
-    width: 100vw;
-    height: 100vh;
+.container {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-wrap: wrap;
 }
 
-.card {
-    box-sizing: border-box;
-    width: 300px;
-    text-align: center;
-    background-color: #f18484;
-    padding: 20px;
-    color: white;
-    text-decoration: none;
+.container.expanded {
+    flex-direction: column;
 }
 
-.card img {
-    display: block;
-    max-width: 100%;
-    margin: 0 auto;
-}
-
-.card h1,
-.card p {
-    display: inline-block;
-}
-
-.card.expanded {
-    text-align: left;
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-}
-
-.card.expanded img {
-    max-width: 60%;
+.child {
+    flex: 1;
+    min-width: 100px;
+    min-height: 50px;
+    border: 1px solid #000;
+    background-color: wheat;
+    margin: 20px;
 }
 
 .animatable {
-    transition: transform 1s ease;
+    transition: transform 500ms ease-in-out;
 }

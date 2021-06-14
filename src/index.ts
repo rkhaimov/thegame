@@ -1,44 +1,50 @@
-import { Matrix3D } from 'rematrix';
-import * as Rematrix from 'rematrix'
 import './styles.css';
+import { Flipper } from './Flipper';
 
 const root = document.createElement('div');
 
 document.body.appendChild(root);
 
 root.innerHTML = `
-<a class='card' href='#'>
-</a>`;
+  <div class='container'>
+    <div class='child'></div>
+    <div class='child'></div>
+    <div class='child'></div>
+    <div class='child'></div>
+    <div class='child'></div>
+    <div class='child'></div>
+    <div class='child'></div><div class='child'></div>
+    <div class='child'></div>
+    <div class='child'></div>
+    <div class='child'></div>
+    <div class='child'></div>
+    <div class='child'></div>
+    <div class='child'></div><div class='child'></div>
+    <div class='child'></div>
+    <div class='child'></div>
+    <div class='child'></div>
+    <div class='child'></div>
+    <div class='child'></div>
+    <div class='child'></div>
+  </div>
+`;
 
-const card = document.querySelector<HTMLAnchorElement>('.card');
+const children = document.querySelectorAll<HTMLAnchorElement>('.child');
 
-if (card) {
-  card.addEventListener('click', function (event) {
+const flipper = new Flipper(Array.from(children));
+
+const container = document.querySelector<HTMLDivElement>('.container');
+
+if (container) {
+  container.addEventListener('click', function (event) {
     event.preventDefault();
 
-    const before = this.getBoundingClientRect();
+    const snapshot = flipper.capture();
 
     this.classList.toggle('expanded');
 
-    const after = this.getBoundingClientRect();
+    flipper.invert(snapshot);
 
-    const transformations: Matrix3D[] = [];
-
-    transformations.push(Rematrix.translateX(before.left - after.left));
-    transformations.push(Rematrix.translateY(before.top - after.top));
-    transformations.push(Rematrix.scaleX(before.width / after.width));
-    transformations.push(Rematrix.scaleY(before.height / after.height));
-
-    const inverse = transformations.reduce(Rematrix.multiply);
-
-    this.style.transform = Rematrix.toString(inverse);
-    this.style.transformOrigin = '0 0';
-
-    this.offsetTop;
-
-    this.classList.add('animatable');
-    this.style.transform = Rematrix.toString(Rematrix.identity());
-
-    this.ontransitionend = () => this.classList.remove('animatable');
+    flipper.animate();
   });
 }
