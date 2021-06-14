@@ -50,3 +50,7 @@ body > div {
 .card.expanded img {
     max-width: 60%;
 }
+
+.animatable {
+    transition: transform 1s ease;
+}

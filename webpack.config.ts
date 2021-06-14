@@ -9,6 +9,11 @@ const config: Configuration = {
   module: {
     rules: [
       {
+        test: /\.(js|ts)$/,
+        enforce: "pre",
+        use: ["source-map-loader"],
+      },
+      {
         test: /\.ts$/,
         exclude: /node_modules/,
         use: {
