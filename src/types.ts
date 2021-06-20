@@ -1,6 +1,5 @@
-export type Graph = Map<number, GNode>;
+export type Graph = Map<number, NodeMeta>;
 
-export type GNode = {
-  color?: string;
+export type NodeMeta = {
   neighbors: number[];
 };

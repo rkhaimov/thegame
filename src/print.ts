@@ -1,35 +1,61 @@
-import * as vis from 'vis-network';
-import { assert } from './utils';
-import { Graph } from './types';
+import { Graph, NodeMeta } from './types';
+import { NodeComponent } from './NodeComponent';
+import { NodeEdge } from './NodeEdge';
+import { getPosition } from './getPosition';
+
+document.body.innerHTML =
+  '<canvas id="myCanvas" width="800" height="700" style="border:1px solid #000000;display: block;margin: 0 auto;"></canvas>';
+
+const canvas = document.getElementById('myCanvas') as HTMLCanvasElement;
 
 export function print(graph: Graph) {
-  const entries = Array.from(graph.keys());
+  const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 
-  const nodes = entries
-    .map((key): vis.Node => {
-      const node = graph.get(key);
+  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-      assert(node !== undefined);
+  const from = {
+    x: (800 - 100) / 2,
+    y: (700 + 100) / 2,
+  };
 
-      return { id: key, label: `${key}`, ...node };
+  drawNodes(ctx, from, [0, graph.get(0)!], graph, new Map());
+}
+
+function drawNodes(
+  ctx: CanvasRenderingContext2D,
+  nodePosition: { x: number; y: number },
+  [node, meta]: [number, NodeMeta],
+  graph: Graph,
+  drawn: DrawnNodes,
+) {
+  if (drawn.has(node) && drawn.get(node)!.children) {
+    return;
+  }
+
+  meta.neighbors.forEach((neighbor, index) => {
+    const neighborPosition = getPosition(index, meta.neighbors.length, nodePosition, neighbor, drawn);
+
+    NodeEdge({
+      ctx,
+      from: nodePosition,
+      to: neighborPosition,
     });
 
-  const edges = entries
-    .reduce((accumulated, key) => {
-      const node = graph.get(key);
+    NodeComponent({
+      ctx,
+      node: neighbor,
+      on: neighborPosition,
+      drawn,
+    });
+  });
 
-      assert(node !== undefined);
+  NodeComponent({ ctx, on: nodePosition, node, drawn });
 
-      const links = node.neighbors.map((sibling): vis.Edge => ({ from: key, to: sibling }));
+  drawn.get(node)!.children = true;
 
-      return [...accumulated, ...links];
-    }, [] as vis.Edge[]);
-
-  document.body.style.height = '100vh';
-  document.body.style.width = '100vw';
-
-  const network = new vis.Network(document.body, {
-    nodes,
-    edges
-  }, {});
+  meta.neighbors.forEach((neighbor, index) => {
+    drawNodes(ctx, drawn.get(neighbor)!.on, [neighbor, graph.get(neighbor)!], graph, drawn);
+  });
 }
+
+export type DrawnNodes = Map<number, { on: { x: number; y: number }, children: boolean }>;
