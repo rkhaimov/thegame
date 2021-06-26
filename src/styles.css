@@ -1,0 +1,30 @@
+:root {
+    --cell-size: 50px;
+}
+
+.calendar {
+    background-color: gray;
+    width: calc(var(--cell-size) * 7);
+    height: calc(var(--cell-size) * 6);
+    overflow: hidden;
+}
+
+.cell {
+    display: inline-block;
+    width: var(--cell-size);
+    height: var(--cell-size);
+    text-align: center;
+    line-height: var(--cell-size);
+}
+
+.container.animatable {
+    transition: transform 1s ease-in-out;
+}
+
+.container.leaving {
+    transform: translateY(-100%);
+}
+
+.container.entering {
+    transform: translateY(-100%);
+}

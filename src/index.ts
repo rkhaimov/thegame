@@ -1,40 +1,70 @@
-const WAYS: Record<string, 'P' | 'N'> = {
-  ['1']: 'P',
-};
+import { getDatesFromMonth } from './date';
+import './styles.css';
 
-for (let permutation = 3; permutation < 10; permutation += 2) {
-  const bits = Math.floor(Math.log2(permutation));
+const calendar = document.createElement('div');
 
-  for (let bit = bits; bit > 0; bit -= 1) {
-    const leave = Math.pow(2, bit) - 1;
+calendar.classList.add('calendar');
 
-    const result = (leave & permutation).toString(2);
+document.body.appendChild(calendar);
 
-    if (WAYS[result] === 'P') {
-      WAYS[permutation.toString(2)] = 'N';
+const state = createState({ node: render(getDatesFromMonth(new Date())), date: new Date() });
 
-      break;
-    }
+state.onChange((prev, curr) => {
+  prev.node.classList.add('leaving', 'animatable');
+  curr.node.classList.add('entering', 'animatable');
+
+  prev.node.ontransitionend = () => {
+    prev.node.remove();
+    curr.node.classList.remove('entering', 'animatable');
+  };
+});
+
+setInterval(() => {
+  const curr = new Date(state.get().date);
+
+  curr.setMonth(state.get().date.getMonth() + 1);
+
+  const container = render(getDatesFromMonth(curr));
+
+  document.body.offsetTop;
+
+  state.change({ node: container, date: curr });
+}, 3_000);
+
+function render(dates: number[]) {
+  const container = document.createElement('div');
+
+  container.classList.add('container');
+
+  for (const date of dates) {
+    const cell = document.createElement('div');
+
+    cell.innerText = `${date}`;
+    cell.classList.add('cell');
+
+    container.appendChild(cell);
   }
 
-  if (WAYS[permutation.toString(2)] === 'N') {
-    continue;
-  }
+  calendar.appendChild(container);
 
-  for (let bit = bits; bit > 1; bit -= 2) {
-    const mask = Math.pow(2, bits + 1) - 1;
-    const leave = (Math.pow(2, bit) + Math.pow(2, bit - 1)) ^ mask;
-
-    const result = (permutation & leave).toString(2);
-
-    if (WAYS[result] === 'P') {
-      WAYS[permutation.toString(2)] = 'N';
-
-      break;
-    }
-  }
-
-  WAYS[permutation.toString(2)] = WAYS[permutation.toString(2)] ?? 'P';
+  return container;
 }
 
-console.log(WAYS);
+function createState<T>(initial: T) {
+  let state = initial;
+  let handleChange: (prev: T, curr: T) => unknown = () => ({});
+
+  return {
+    change(newState: T) {
+      handleChange(state, newState);
+
+      state = newState;
+    },
+    onChange(clb: (prev: T, curr: T) => unknown) {
+      handleChange = clb;
+    },
+    get() {
+      return state;
+    }
+  };
+}
