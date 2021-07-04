@@ -3,3 +3,4 @@ node_modules
 bundled
 webpack.config.js
 *.tsbuildinfo
+dist

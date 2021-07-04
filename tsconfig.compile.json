@@ -1,9 +1,10 @@
 {
   "extends": "./tsconfig.base.json",
-  "include": ["./webpack.config.ts"],
+  "files": ["./src/index.ts", "./src/worker.ts"],
   "compilerOptions": {
     "target": "ESNext",
     "module": "CommonJS",
+    "outDir": "dist",
     "incremental": true
   }
 }
